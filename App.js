@@ -26,6 +26,7 @@ export default function App() {
   const [observing, setObserving] = useState(false);
   const [foregroundService, setForegroundService] = useState(false);
   const [location, setLocation] = useState(null);
+  const [atmCoords, setAtmCoords] = useState([]);
 
   const watchId = useRef(null);
 
@@ -208,9 +209,17 @@ export default function App() {
     VIForegroundService.stopService().catch((err) => err);
   }, []);
 
+  const findATMs = async () => {
+    const { coords: { latitude, longitude } } = location
+    const { results } = await (await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${5000}&type=atm&keyword=comerica&key=AIzaSyAt6WnqjdGtQu35WWo3iOoAwpPFuxoB9p4`)).json()
+    const atmLocations = results.map(({geometry: { location: {lat, lng} }}) => ({latitude: lat, longitude: lng}))
+    setAtmCoords(atmLocations)
+  }
+
   return (
     <View style={styles.mainContainer}>
-      <MapView coords={location?.coords || null} />
+
+      {location?.coords && <MapView atmCoords={atmCoords} coords={location?.coords || null} />}
 
       <ScrollView
         style={styles.container}
@@ -259,7 +268,10 @@ export default function App() {
           )}
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Get Location" onPress={getLocation} />
+          <View style={styles.buttons}>
+            <Button title="Get Location" onPress={getLocation} />
+            <Button title="Find ATMs" onPress={findATMs} />
+          </View>
           <View style={styles.buttons}>
             <Button
               title="Start Observing"

@@ -2,23 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import RNMapView, { Circle, Marker } from 'react-native-maps';
 
-const MapView = ({ coords }) => {
+const DEFAULT_PADDING = { top: 40, right: 40, bottom: 40, left: 40 }
+
+const MapView = ({ coords, atmCoords }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    if (!!coords && mapRef.current) {
-      mapRef.current.animateCamera({
-        center: {
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-        },
-        pitch: 0,
-        heading: 0,
-        altitude: 1000,
-        zoom: 16,
-      });
-    }
-  }, [coords]);
+    atmCoords.length > 0 && mapRef.current.fitToCoordinates(atmCoords, {animated: true, edgePadding: DEFAULT_PADDING})
+  }, [atmCoords])
 
   return (
     <View style={styles.container}>
@@ -27,12 +18,12 @@ const MapView = ({ coords }) => {
         initialCamera={{
           altitude: 15000,
           center: {
-            latitude: 23.7603,
-            longitude: 90.4125,
+            latitude: coords.latitude,
+            longitude: coords.longitude,
           },
           heading: 0,
           pitch: 0,
-          zoom: 11,
+          zoom: 15,
         }}
         loadingEnabled
         loadingBackgroundColor="white"
@@ -72,6 +63,13 @@ const MapView = ({ coords }) => {
               strokeColor="rgba(0, 150, 255, 0.5)"
               fillColor="rgba(0, 150, 255, 0.5)"
             />
+            {atmCoords.map((coordinate, index) => (
+                <Marker
+                  key={index}
+                  coordinate={coordinate}
+                  title={`bank ${index+1}`}
+                />
+            ))}
           </>
         )}
       </RNMapView>
