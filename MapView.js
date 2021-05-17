@@ -11,6 +11,21 @@ const MapView = ({ coords, atmCoords }) => {
     atmCoords.length > 0 && mapRef.current.fitToCoordinates(atmCoords, {animated: true, edgePadding: DEFAULT_PADDING})
   }, [atmCoords])
 
+  useEffect(() => {
+    if (!!coords && mapRef.current) {
+      mapRef.current.animateCamera({
+        center: {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        },
+        pitch: 0,
+        heading: 0,
+        altitude: 1000,
+        zoom: 16,
+      });
+    }
+  }, [coords])
+
   return (
     <View style={styles.container}>
       <RNMapView
