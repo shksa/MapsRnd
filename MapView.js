@@ -4,19 +4,19 @@ import RNMapView, { Circle, Marker } from 'react-native-maps';
 
 const DEFAULT_PADDING = { top: 40, right: 40, bottom: 40, left: 40 }
 
-const MapView = ({ coords, atmCoords }) => {
+const MapView = ({ userCoords, atmCoords }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    atmCoords.length > 0 && mapRef.current.fitToCoordinates(atmCoords, {animated: true, edgePadding: DEFAULT_PADDING})
-  }, [atmCoords])
+    atmCoords.length > 0 && mapRef.current.fitToCoordinates([...atmCoords, userCoords], {animated: true, edgePadding: DEFAULT_PADDING})
+  }, [atmCoords, userCoords])
 
   useEffect(() => {
-    if (!!coords && mapRef.current) {
+    if (!!userCoords && mapRef.current) {
       mapRef.current.animateCamera({
         center: {
-          latitude: coords.latitude,
-          longitude: coords.longitude,
+          latitude: userCoords.latitude,
+          longitude: userCoords.longitude,
         },
         pitch: 0,
         heading: 0,
@@ -24,7 +24,7 @@ const MapView = ({ coords, atmCoords }) => {
         zoom: 16,
       });
     }
-  }, [coords])
+  }, [userCoords])
 
   return (
     <View style={styles.container}>
@@ -33,8 +33,8 @@ const MapView = ({ coords, atmCoords }) => {
         initialCamera={{
           altitude: 15000,
           center: {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+            latitude: userCoords.latitude,
+            longitude: userCoords.longitude,
           },
           heading: 0,
           pitch: 0,
@@ -45,20 +45,20 @@ const MapView = ({ coords, atmCoords }) => {
         style={StyleSheet.absoluteFillObject}
         rotateEnabled={false}
       >
-        {!!coords && (
+        {!!userCoords && (
           <>
             <Marker
               anchor={{ x: 0.5, y: 0.6 }}
               coordinate={{
-                latitude: coords.latitude,
-                longitude: coords.longitude,
+                latitude: userCoords.latitude,
+                longitude: userCoords.longitude,
               }}
               flat
               style={{
-                ...(coords.heading !== -1 && {
+                ...(userCoords.heading !== -1 && {
                   transform: [
                     {
-                      rotate: `${coords.heading}deg`,
+                      rotate: `${userCoords.heading}deg`,
                     },
                   ],
                 }),
@@ -71,10 +71,10 @@ const MapView = ({ coords, atmCoords }) => {
             </Marker>
             <Circle
               center={{
-                latitude: coords.latitude,
-                longitude: coords.longitude,
+                latitude: userCoords.latitude,
+                longitude: userCoords.longitude,
               }}
-              radius={coords.accuracy}
+              radius={userCoords.accuracy}
               strokeColor="rgba(0, 150, 255, 0.5)"
               fillColor="rgba(0, 150, 255, 0.5)"
             />

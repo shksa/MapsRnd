@@ -25,7 +25,7 @@ export default function App() {
   const [significantChanges, setSignificantChanges] = useState(false);
   const [observing, setObserving] = useState(false);
   const [foregroundService, setForegroundService] = useState(false);
-  const [location, setLocation] = useState(null);
+  const [userCoords, setUserCoords] = useState(null);
   const [atmCoords, setAtmCoords] = useState([]);
 
   const watchId = useRef(null);
@@ -116,12 +116,12 @@ export default function App() {
 
     Geolocation.getCurrentPosition(
       (position) => {
-        setLocation(position);
+        setUserCoords(position.coords);
         console.log(position);
       },
       (error) => {
         Alert.alert(`Code ${error.code}`, error.message);
-        setLocation(null);
+        setUserCoords(null);
         console.log(error);
       },
       {
@@ -154,11 +154,11 @@ export default function App() {
 
     watchId.current = Geolocation.watchPosition(
       (position) => {
-        setLocation(position);
+        setUserCoords(position);
         console.log(position);
       },
       (error) => {
-        setLocation(null);
+        setUserCoords(null);
         console.log(error);
       },
       {
@@ -210,7 +210,7 @@ export default function App() {
   }, []);
 
   const findATMs = async () => {
-    const { coords: { latitude, longitude } } = location
+    const { latitude, longitude } = userCoords
     const { results } = await (await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${5000}&type=atm&keyword=comerica&key=AIzaSyAt6WnqjdGtQu35WWo3iOoAwpPFuxoB9p4`)).json()
     const atmLocations = results.map(({geometry: { location: {lat, lng} }}) => ({latitude: lat, longitude: lng}))
     setAtmCoords(atmLocations)
@@ -219,19 +219,19 @@ export default function App() {
   return (
     <View style={styles.mainContainer}>
 
-      {location?.coords && <MapView atmCoords={atmCoords} coords={location?.coords || null} />}
+      {userCoords && <MapView atmCoords={atmCoords} userCoords={userCoords} />}
 
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
       >
-        <View>
-          <View style={styles.option}>
+        {/* <View> */}
+          {/* <View style={styles.option}>
             <Text>Enable High Accuracy</Text>
             <Switch onValueChange={setHighAccuracy} value={highAccuracy} />
-          </View>
+          </View> */}
 
-          {Platform.OS === 'ios' && (
+          {/* {Platform.OS === 'ios' && (
             <View style={styles.option}>
               <Text>Use Significant Changes</Text>
               <Switch
@@ -265,14 +265,14 @@ export default function App() {
                 />
               </View>
             </>
-          )}
-        </View>
+          )} */}
+        {/* </View> */}
         <View style={styles.buttonContainer}>
           <View style={styles.buttons}>
             <Button title="Get Location" onPress={getLocation} />
             <Button title="Find ATMs" onPress={findATMs} />
           </View>
-          <View style={styles.buttons}>
+          {/* <View style={styles.buttons}>
             <Button
               title="Start Observing"
               onPress={getLocationUpdates}
@@ -283,12 +283,12 @@ export default function App() {
               onPress={removeLocationUpdates}
               disabled={!observing}
             />
-          </View>
+          </View> */}
         </View>
         <View style={styles.result}>
-          <Text>Latitude: {location?.coords?.latitude || ''}</Text>
-          <Text>Longitude: {location?.coords?.longitude || ''}</Text>
-          <Text>Heading: {location?.coords?.heading}</Text>
+          <Text>Latitude: {userCoords?.coords?.latitude || ''}</Text>
+          <Text>Longitude: {userCoords?.coords?.longitude || ''}</Text>
+          {/* <Text>Heading: {location?.coords?.heading}</Text>
           <Text>Accuracy: {location?.coords?.accuracy}</Text>
           <Text>Altitude: {location?.coords?.altitude}</Text>
           <Text>Altitude Accuracy: {location?.coords?.altitudeAccuracy}</Text>
@@ -299,7 +299,7 @@ export default function App() {
             {location?.timestamp
               ? new Date(location.timestamp).toLocaleString()
               : ''}
-          </Text>
+          </Text> */}
         </View>
       </ScrollView>
     </View>
