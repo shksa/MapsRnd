@@ -3,7 +3,7 @@ import {Button, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {getLocation} from './geoLocation';
 import MapView from './MapView';
 
-export default function Maps() {
+export default function Map() {
   const [userCoords, setUserCoords] = useState(null);
   const [atmCoords, setAtmCoords] = useState([]);
 
