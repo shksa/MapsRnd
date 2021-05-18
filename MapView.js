@@ -1,15 +1,19 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
-import RNMapView, { Circle, Marker } from 'react-native-maps';
+import React, {useEffect, useRef} from 'react';
+import {View, StyleSheet} from 'react-native';
+import RNMapView, {Circle, Marker} from 'react-native-maps';
 
-const DEFAULT_PADDING = { top: 40, right: 40, bottom: 40, left: 40 }
+const DEFAULT_PADDING = {top: 40, right: 40, bottom: 40, left: 40};
 
-const MapView = ({ userCoords, atmCoords }) => {
+const MapView = ({userCoords, atmCoords}) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    atmCoords.length > 0 && mapRef.current.fitToCoordinates([...atmCoords, userCoords], {animated: true, edgePadding: DEFAULT_PADDING})
-  }, [atmCoords, userCoords])
+    atmCoords.length > 0 &&
+      mapRef.current.fitToCoordinates([...atmCoords, userCoords], {
+        animated: true,
+        edgePadding: DEFAULT_PADDING,
+      });
+  }, [atmCoords, userCoords]);
 
   useEffect(() => {
     if (!!userCoords && mapRef.current) {
@@ -24,7 +28,7 @@ const MapView = ({ userCoords, atmCoords }) => {
         zoom: 16,
       });
     }
-  }, [userCoords])
+  }, [userCoords]);
 
   return (
     <View style={styles.container}>
@@ -43,12 +47,11 @@ const MapView = ({ userCoords, atmCoords }) => {
         loadingEnabled
         loadingBackgroundColor="white"
         style={StyleSheet.absoluteFillObject}
-        rotateEnabled={false}
-      >
+        rotateEnabled={false}>
         {!!userCoords && (
           <>
             <Marker
-              anchor={{ x: 0.5, y: 0.6 }}
+              anchor={{x: 0.5, y: 0.6}}
               coordinate={{
                 latitude: userCoords.latitude,
                 longitude: userCoords.longitude,
@@ -62,8 +65,7 @@ const MapView = ({ userCoords, atmCoords }) => {
                     },
                   ],
                 }),
-              }}
-            >
+              }}>
               <View style={styles.dotContainer}>
                 <View style={[styles.arrow]} />
                 <View style={styles.dot} />
@@ -79,11 +81,11 @@ const MapView = ({ userCoords, atmCoords }) => {
               fillColor="rgba(0, 150, 255, 0.5)"
             />
             {atmCoords.map((coordinate, index) => (
-                <Marker
-                  key={index}
-                  coordinate={coordinate}
-                  title={`bank ${index+1}`}
-                />
+              <Marker
+                key={index}
+                coordinate={coordinate}
+                title={`bank ${index + 1}`}
+              />
             ))}
           </>
         )}
