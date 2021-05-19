@@ -18,7 +18,13 @@ const Chart = () => {
             height={350}
             theme={VictoryTheme.material}
             padding={{top: 50, bottom: 50, left: 50, right: 20}}>
-            <VictoryLine data={data} />
+            <VictoryLine
+              data={data}
+              style={{
+                data: {stroke: '#c43a31'},
+                parent: {border: '1px solid #ccc'},
+              }}
+            />
           </VictoryChart>
         </View>
       </ScrollView>
