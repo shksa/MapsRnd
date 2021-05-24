@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import PushNotification from 'react-native-push-notification';
-// var PushNotification = require("react-native-push-notification");
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 export default class PushController extends Component {
   componentDidMount() {
+    PushNotificationIOS.addEventListener('registrationError', console.log);
     PushNotification.getChannels(function (channels) {
       console.log('getchannels gives us', channels);
     });
@@ -18,9 +19,6 @@ export default class PushController extends Component {
         console.log('NOTIFICATION:', notification);
 
         // process the notification here
-
-        // required on iOS only
-        // notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
       // Android only
       senderID: '1090437480032',
