@@ -2,18 +2,31 @@ import React, {useEffect, useRef} from 'react';
 import {View, StyleSheet} from 'react-native';
 import RNMapView, {Circle, Marker} from 'react-native-maps';
 
-const DEFAULT_PADDING = {top: 40, right: 40, bottom: 40, left: 40};
+const DEFAULT_PADDING = {top: 100, right: 100, bottom: 100, left: 100};
 
-const MapView = ({userCoords, atmCoords}) => {
+const MapView = ({
+  userCoords,
+  atmCoords,
+  cashbackCoords,
+  surchargeFreeAtmCoords,
+}) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
     atmCoords.length > 0 &&
-      mapRef.current.fitToCoordinates([...atmCoords, userCoords], {
-        animated: true,
-        edgePadding: DEFAULT_PADDING,
-      });
-  }, [atmCoords, userCoords]);
+      mapRef.current.fitToCoordinates(
+        [
+          ...atmCoords,
+          userCoords,
+          ...cashbackCoords,
+          ...surchargeFreeAtmCoords,
+        ],
+        {
+          animated: true,
+          edgePadding: DEFAULT_PADDING,
+        },
+      );
+  }, [atmCoords, userCoords, cashbackCoords, surchargeFreeAtmCoords]);
 
   useEffect(() => {
     if (!!userCoords && mapRef.current) {
@@ -85,6 +98,22 @@ const MapView = ({userCoords, atmCoords}) => {
                 key={index}
                 coordinate={coordinate}
                 title={`bank ${index + 1}`}
+              />
+            ))}
+            {cashbackCoords.map((coordinate, index) => (
+              <Marker
+                key={index}
+                coordinate={coordinate}
+                title={`cashback store ${index + 1}`}
+                pinColor="#0000FF"
+              />
+            ))}
+            {surchargeFreeAtmCoords.map((coordinate, index) => (
+              <Marker
+                key={index}
+                coordinate={coordinate}
+                title={`surcharge free atm ${index + 1}`}
+                pinColor="#00FF00"
               />
             ))}
           </>

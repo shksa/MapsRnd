@@ -1,33 +1,38 @@
 import React, {useState} from 'react';
 import {Button, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {getLocation} from './geoLocation';
 import MapView from './MapView';
 
 export default function Map() {
   const [userCoords, setUserCoords] = useState(null);
   const [atmCoords, setAtmCoords] = useState([]);
+  const [cashbackCoords, setCashbackCoords] = useState([]);
+  const [surchargeFreeAtmCoords, setSurchargeFreeAtmCoords] = useState([]);
 
   const getUserLocation = async () => {
-    const userGeoLocation = await getLocation();
-    setUserCoords(userGeoLocation);
+    setUserCoords({
+      accuracy: 20,
+      altitude: 0,
+      altitudeAccuracy: 0,
+      heading: 0,
+      latitude: 37.4219983,
+      longitude: -122.084,
+      speed: 0,
+    });
   };
 
   const findATMs = async () => {
-    const {latitude, longitude} = userCoords;
     try {
-      const {results} = await (
-        await fetch(
-          `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${5000}&type=atm&keyword=comerica&key=AIzaSyAt6WnqjdGtQu35WWo3iOoAwpPFuxoB9p4`,
-        )
-      ).json();
-      const atmLocations = results.map(
-        ({
-          geometry: {
-            location: {lat, lng},
-          },
-        }) => ({latitude: lat, longitude: lng}),
-      );
-      setAtmCoords(atmLocations);
+      setAtmCoords([
+        {latitude: 37.3779488, longitude: -122.1146758},
+        {latitude: 37.3979488, longitude: -122.0146758},
+      ]);
+      setCashbackCoords([
+        {latitude: 37.4059488, longitude: -122.1146758},
+        {latitude: 37.3879488, longitude: -122.0546758},
+      ]);
+      setSurchargeFreeAtmCoords([
+        {latitude: 37.3729488, longitude: -122.0746758},
+      ]);
     } catch (error) {
       console.log(error);
     }
@@ -35,7 +40,14 @@ export default function Map() {
 
   return (
     <View style={styles.mainContainer}>
-      {userCoords && <MapView atmCoords={atmCoords} userCoords={userCoords} />}
+      {userCoords && (
+        <MapView
+          atmCoords={atmCoords}
+          userCoords={userCoords}
+          cashbackCoords={cashbackCoords}
+          surchargeFreeAtmCoords={surchargeFreeAtmCoords}
+        />
+      )}
 
       <ScrollView
         style={styles.container}
